@@ -35,7 +35,8 @@
                 <div class="col-lg-12">
                     <div class="card card-header-actions mb-4">
                         <div class="card-header">
-                            <a class="btn btn-sm btn-primary" href="{{ route('user.create') }}">
+                            <a class="btn btn-sm btn-primary" href="{{ route('user.create') }}" data-bs-toggle="modal"
+                            data-bs-target="#createModal">
                                 Tambah Pengguna Baru
                             </a>
                         </div>
@@ -63,10 +64,7 @@
                                     <tr>
                                         <th width="10">No.</th>
                                         <th>Nama</th>
-                                        <th>NIM / NIK</th>
-                                        <th>Email Kampus</th>
-                                        <th>Tanggal Lahir</th>
-                                        <th>Alamat</th>
+                                        <th>Email</th>
                                         <th>Jabatan</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -79,6 +77,106 @@
             </div>           
         </div>
     </main>
+    {{-- Modal Add --}}
+    <div class="modal fade" id="createModal" role="dialog" aria-labelledby="createModal" aria-hidden="true"
+        style="overflow:hidden;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModal">Tambah Data</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('user.store') }}" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="col-md-12">
+                                <label for="post_id">Nama</label>
+                                <input type="text" name="name" class="form-control" placeholder="Masukan Nama"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-md-12">
+                                <label for="post_id">Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="Masukan Email"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-md-12">
+                                <label for="post_id">Jabatan</label>
+                                <select name="position_id" class="form-control">
+                                    @foreach ($positions as $position)
+                                        <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit"><i data-feather="check"></i> &nbsp;
+                            Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Update --}}
+    @foreach ($users as $item)
+        @php
+            $id = $item->id;
+            $name = $item->name;
+            $email = $item->email;
+            $position_id = $item->position_id;
+        @endphp
+        <div class="modal fade" id="updateModal{{ $id }}" role="dialog" aria-labelledby="createModal"
+            aria-hidden="true" style="overflow:hidden;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModal{{ $id }}">Ubah Data</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('user.update', $item->id) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <div class="col-md-12">
+                                    <label for="post_id">Nama </label>
+                                    <input type="text" name="name" value="{{ $name }}"
+                                        class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="col-md-12">
+                                    <label for="post_id">Email </label>
+                                    <input type="email" name="email" value="{{ $email }}"
+                                        class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="col-md-12">
+                                    <label for="post_id">Jabatan</label>
+                                    <select name="position_id" class="form-control">
+                                        @foreach ($positions as $val)
+                                            <option value="{{ $val->id }}"
+                                                @if ($val->id == $position_id) selected @endif>{{ $val->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="submit">Ubah</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @push('addon-script')
@@ -97,10 +195,7 @@
             searchable: false
           },
           { data: 'name', name: 'name' },
-          { data: 'nim', name: 'nim' },
           { data: 'email', name: 'email' },
-          { data: 'birthday', name: 'birthday' },
-          { data: 'address', name: 'address' },
           { data: 'position', name: 'position' },
           { 
             data: 'action', 

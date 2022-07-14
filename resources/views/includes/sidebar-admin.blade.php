@@ -34,8 +34,13 @@
             </a>
 
             @if (Auth::user()->role_id == 1)
-                <a class="nav-link {{ request()->is('admin/anggota*') ? 'active' : '' }}"
+                {{-- <a class="nav-link {{ request()->is('admin/anggota*') ? 'active' : '' }}"
                     href="{{ route('anggota.index') }}">
+                    <div class="nav-link-icon"><i data-feather="users"></i></div>
+                    Data User
+                </a> --}}
+                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}"
+                    href="{{ route('user.index') }}">
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Data User
                 </a>

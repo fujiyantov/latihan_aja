@@ -2,29 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Position;
 use Illuminate\Http\Request;
+use App\Rules\MatchOldPassword;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Rules\MatchOldPassword;
-use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\Facades\DataTables;
 
-use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
     public function index()
     {
         if (request()->ajax()) {
-            $query = User::latest()->get();
+            $query = User::where('id', '!=', 1)->latest()->get();
 
+            /**
+             * old
+             * <a class="btn btn-primary btn-xs" href="' . route('user.edit', $item->id) . '"><i class="fas fa-edit"></i> &nbsp; Ubah</a>
+             */
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="btn btn-primary btn-xs" href="' . route('user.edit', $item->id) . '">
-                            <i class="fas fa-edit"></i> &nbsp; Ubah
+                        <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
+                            <i class="fas fa-edit"></i> &nbsp; Edit
                         </a>
                         <form action="' . route('user.destroy', $item->id) . '" method="POST" onsubmit="return confirm('."'Anda akan menghapus item ini secara permanen dari situs anda?'".')">
                             ' . method_field('delete') . csrf_field() . '
@@ -46,15 +51,22 @@ class UserController extends Controller
                                     $item->name .'
                                 </div>';
                 })
-                ->editColumn('birthday', function ($item) {
-                    return Carbon::parse($item->birthday)->format('d/m/Y');
+                ->editColumn('position', function ($item) {
+                    return $item->position_id != null ? $item->position->name : '-';
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action','name', 'birthday'])
+                ->rawColumns(['action','name'])
                 ->make();
         }
-        return view('pages.admin.user.index');
+
+        $positions = Position::all();
+        $users = User::where('id', '!=', 1)->get();
+
+        return view('pages.admin.user.index', [
+            'positions' => $positions,
+            'users' => $users,
+        ]);
     }
 
     public function create()
@@ -66,11 +78,14 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email:dns|unique:users',
-            'password' => 'required|min:5|max:255',
+            'position_id' => 'required|numeric|min:1',
+            'email' => 'required|email|unique:users',
+            // 'password' => 'required|min:5|max:255',
         ]);
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
+        // $validatedData['password'] = Hash::make($validatedData['password']);
+        $validatedData['password'] = Hash::make('password');
+        $validatedData['role_id'] = 2;
 
         User::create($validatedData);
 
@@ -107,7 +122,8 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email:dns',
+            'email' => 'required|email',
+            'position_id' => 'required|numeric|min:1',
         ]);
 
         $item = User::findOrFail($id);

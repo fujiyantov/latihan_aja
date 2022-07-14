@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('profile')->nullable();
             $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('position_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
