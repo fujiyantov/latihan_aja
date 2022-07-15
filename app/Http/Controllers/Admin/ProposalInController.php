@@ -38,19 +38,30 @@ class ProposalInController extends Controller
                     <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan memvalidasi proposal ini?'" . ')">
                             ' . csrf_field() . '
                             <button class="btn btn-success btn-xs">
-                                <i class="far fa-check"></i> &nbsp; Validasi
+                                <i class="fa fa-pen"></i> &nbsp; Validasi
                             </button>
                         </form>
                     ';
                 })
+                ->addColumn('disposisi', function ($item) {
+                    if (Auth::user()->role_id == 3) {
+                        return '
+                            <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '">
+                                <i class="fas fa-eye"></i> &nbsp; Lihat Catatan
+                            </a>
+                            <a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
+                                <i class="fa fa-comment"></i>
+                            </a>
+                        ';
+                    } else {
+                        return '-';
+                    }
+                })
                 ->addColumn('proposal', function ($item) {
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
                     return '
-                        <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
-                            <i class="fas fa-edit"></i> &nbsp; Diposisi
-                        </a>
-                        <a class="btn btn-success btn-xs" target="_blank" href="' . $letterUrl . '">
-                            <i class="fa fa-eye"></i>
+                        <a class="btn btn-primary btn-xs" target="_blank" href="' . $letterUrl . '">
+                            <i class="fa fa-file"></i> &nbsp; Lihat Surat
                         </a>
                     ';
                 })
@@ -59,7 +70,7 @@ class ProposalInController extends Controller
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action', 'proposal', 'validasi', 'tanggal'])
+                ->rawColumns(['action', 'proposal', 'validasi', 'tanggal', 'disposisi'])
                 ->make();
         }
         $letter = Letter::all();
@@ -171,8 +182,8 @@ class ProposalInController extends Controller
                 ->with('success', 'Sukses! Proposal berhasil disposisikan');
         } else {
             return redirect()
-            ->route('proposal-masuk.index')
-            ->with('success', 'Proposal belum tervalidasi');
+                ->route('proposal-masuk.index')
+                ->with('success', 'Proposal belum tervalidasi');
         }
     }
 }

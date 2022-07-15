@@ -34,6 +34,8 @@ Route::get('/', [LoginController::class, 'index']);
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout']);
+Route::get('/register', [LoginController::class, 'register'])->name('register')->middleware('guest');
+Route::post('/register', [LoginController::class, 'registerReview'])->name('register-review');
 
 //Admin
 Route::prefix('admin')

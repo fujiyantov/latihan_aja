@@ -62,6 +62,7 @@
                                         <th>No. Surat</th>
                                         <th>Perihal</th>
                                         <th>Tanggal</th>
+                                        <th>Disposisi</th>
                                         <th>Proposal</th>
                                         <th>status</th>
                                         <th>Aksi</th>
@@ -90,8 +91,8 @@
                         <div class="mb-3">
                             <div class="col-md-12">
                                 <label for="post_id">No Ajuan</label>
-                                <input type="number" name="letter_no" class="form-control" placeholder="Masukan Namor Ajuan"
-                                    required>
+                                <input type="text" name="letter_no" class="form-control"
+                                    placeholder="Masukan Namor Ajuan" required>
                             </div>
                             <div class="col-md-12">
                                 <label for="post_id">Tanggal Pengajuan</label>
@@ -134,7 +135,8 @@
                         <h5 class="modal-title" id="updateModal{{ $id }}">Ubah Data</h5>
                         <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="{{ route('proposal-keluar.update', $item->id) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('proposal-keluar.update', $item->id) }}" method="post"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="modal-body">
@@ -152,8 +154,8 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="post_id">Perihal</label>
-                                <input type="text" name="title" value="{{ $title }}" class="form-control" placeholder="Masukan Perihal"
-                                    required>
+                                <input type="text" name="title" value="{{ $title }}" class="form-control"
+                                    placeholder="Masukan Perihal" required>
                             </div>
                             <div class="col-md-12">
                                 <label for="post_id">File Proposal</label>
@@ -162,7 +164,120 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Batal</button>
-                            <button class="btn btn-primary" type="submit"><i data-feather="upload"></i> &nbsp; Upload</button>
+                            <button class="btn btn-primary" type="submit"><i data-feather="upload"></i> &nbsp;
+                                Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Disposisi --}}
+        <div class="modal fade" id="updateModalDisposisi{{ $id }}" role="dialog"
+            aria-labelledby="createModal" aria-hidden="true" style="overflow:hidden;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModal{{ $id }}">Disposisi Proposal</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('disposisi', $item->id) }}" method="post">
+                        @csrf
+                        <div class="modal-body">
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>No Surat</th>
+                                        <td>:</td>
+                                        <td>{{ $letter_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Perihal</th>
+                                        <td>:</td>
+                                        <td>{{ $title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Disposisi Kepada</th>
+                                        <td>:</td>
+                                        <td>
+                                            <select name="member_id" id="" class="form-control">
+                                                @foreach ($position as $val)
+                                                    <option value="{{ $val->id }}">{{ $val->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                <label for="post_id">Comment</label>
+                                <textarea name="description" class="form-control" placeholder="comment here..." cols="30" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Histories --}}
+        <div class="modal fade" id="updateModalCatatan{{ $id }}" role="dialog" aria-labelledby="createModal"
+            aria-hidden="true" style="overflow:hidden;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModal{{ $id }}">Lihat Catatan Disposisi</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="#" method="post">
+                        @csrf
+                        <div class="modal-body">
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>No Surat</th>
+                                        <td>:</td>
+                                        <td>{{ $letter_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <td>:</td>
+                                        <td>{{ $item->date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dari</th>
+                                        <td>:</td>
+                                        <td>{{ $item->user->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Perihal</th>
+                                        <td>:</td>
+                                        <td>{{ $title }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                {{-- <label for="post_id">Catatan Disposisi</label> --}}
+                                <h6 class="card-title">Catatan Disposisi</h6>
+                                    <ul class="timeline">
+                                        <li class="event">
+                                            <p>Registration</p>
+                                            <small>Get here on time, it's first come first serve</small>
+                                        </li>
+                                        <li class="event">
+                                            <p>Opening Ceremony</p>
+                                            <small>Get ready for an exciting event, this will kick off.</small>
+                                        </li>
+                                        <li class="event">
+                                            <p>Opening Ceremony</p>
+                                            <small>Get ready for an exciting event, this will kick off.</small>
+                                        </li>
+                                    </ul>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -196,6 +311,10 @@
                 {
                     data: 'tanggal',
                     name: 'tanggal'
+                },
+                {
+                    data: 'disposisi',
+                    name: 'disposisi'
                 },
                 {
                     data: 'proposal',

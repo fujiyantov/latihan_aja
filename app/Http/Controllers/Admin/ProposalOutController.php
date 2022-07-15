@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Carbon\Carbon;
 use App\Models\Letter;
 
+use App\Models\Position;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Models\LetterHistories;
@@ -23,7 +24,7 @@ class ProposalOutController extends Controller
 
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
-                    if(Auth::user()->role_id == 2) {
+                    if (Auth::user()->role_id == 2) {
                         return '
                             <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
                                 <i class="fas fa-edit"></i> &nbsp; Ubah
@@ -43,9 +44,24 @@ class ProposalOutController extends Controller
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
                     return '
                     <a class="btn btn-primary btn-xs" target="_blank" href="' . $letterUrl . '" ">
-                        Lihat disini
+                        <i class="fa fa-file"></i> &nbsp; Lihat Surat
                     </a>
                     ';
+                })
+                ->addColumn('disposisi', function ($item) {
+                    if ($item->status == 1  && Auth::user()->role_id == 2) {
+                        $disposisi = '';
+                        if (Auth::user()->role_id == 2) {
+                            $disposisi = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '"><i class="fas fa-eye"></i> &nbsp; Lihat Catatan</a>';
+                        }
+                        return $disposisi . '
+                            <a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalDisposisi' . $item->id . '">
+                                <i class="fa fa-comment"></i>
+                            </a>
+                        ';
+                    } else {
+                        return '-';
+                    }
                 })
                 ->addColumn('status', function ($item) {
                     return $item->status == 1 ? 'Sudah di validasi' : 'Belum di validasi';
@@ -55,13 +71,15 @@ class ProposalOutController extends Controller
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action', 'proposal', 'status', 'tanggal'])
+                ->rawColumns(['action', 'proposal', 'status', 'tanggal', "disposisi"])
                 ->make();
         }
         $letter = Letter::all();
+        $position = Position::all();
 
         return view('pages.admin.out.index', [
-            'letter' => $letter
+            'letter' => $letter,
+            'position' => $position
         ]);
     }
 

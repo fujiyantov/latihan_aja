@@ -56,6 +56,7 @@
                                         <th>No. Surat</th>
                                         <th>Perihal</th>
                                         <th>Tanggal</th>
+                                        <th>Disposisi</th>
                                         <th>Proposal</th>
                                         <th>Validasi</th>
                                         <th>Aksi</th>
@@ -154,6 +155,10 @@
                 {
                     data: 'tanggal',
                     name: 'tanggal'
+                },
+                {
+                    data: 'disposisi',
+                    name: 'disposisi'
                 },
                 {
                     data: 'proposal',

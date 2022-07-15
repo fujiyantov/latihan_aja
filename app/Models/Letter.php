@@ -21,8 +21,8 @@ class Letter extends Model
         'status',
     ];
 
-    public function member()
+    public function user()
     {
-        return $this->belongsTo(Member::class, 'member_id');
+        return $this->belongsTo(User::class, 'member_id');
     }
 }

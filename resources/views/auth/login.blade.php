@@ -40,12 +40,9 @@
                                     <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
                                 </div>
                                 <!-- Form Group (remember password checkbox)-->
-                                {{-- <div class="mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
-                                        <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
-                                    </div>
-                                </div> --}}
+                                <div class="mb-3">
+                                    <small>Do you have account? <a href="{{ route('register') }}">Register now</a></small>
+                                </div>
                                 <!-- Form Group (login box)-->
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="small" href="#">
@@ -57,9 +54,6 @@
                         </div>
                         <div class="card-footer text-center">
                             <div class="small">
-                                {{-- <a href="/">
-                                    <i class="fas fa-arrow-left"></i> Pergi ke Texno.id
-                                </a> --}}
                             </div>
                         </div>
                     </div>
