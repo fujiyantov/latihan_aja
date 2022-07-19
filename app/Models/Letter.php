@@ -16,6 +16,7 @@ class Letter extends Model
         'date',
         'date_approval',
         'approval_by',
+        'next_approval_by',
         'member_id',
         'letter_file',
         'status',
@@ -24,5 +25,10 @@ class Letter extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'member_id');
+    }
+
+    public function submission()
+    {
+        return $this->hasMany(LetterSubmission::class, 'letter_id');
     }
 }

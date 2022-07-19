@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
-use App\Models\Letter;
+use App\Models\Role;
 
+use App\Models\Letter;
 use App\Models\Position;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Models\LetterHistories;
+use App\Models\LetterSubmission;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +21,16 @@ class ProposalOutController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
         if (request()->ajax()) {
-            $query = Letter::latest()->get();
+            $query = Letter::where('member_id', $user->id)
+                ->latest()->get();
 
             return Datatables::of($query)
+                ->addColumn('keterangan', function ($item) {
+                    return $item->user->name;
+                })
                 ->addColumn('action', function ($item) {
                     if (Auth::user()->role_id == 2) {
                         return '
@@ -44,38 +52,38 @@ class ProposalOutController extends Controller
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
                     return '
                     <a class="btn btn-primary btn-xs" target="_blank" href="' . $letterUrl . '" ">
-                        <i class="fa fa-file"></i> &nbsp; Lihat Surat
+                        <i class="fa fa-file"></i> &nbsp; Lihat Proposal
                     </a>
                     ';
                 })
                 ->addColumn('disposisi', function ($item) {
-                    if ($item->status == 1  && Auth::user()->role_id == 2) {
-                        $disposisi = '';
-                        if (Auth::user()->role_id == 2) {
-                            $disposisi = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '"><i class="fas fa-eye"></i> &nbsp; Lihat Catatan</a>';
-                        }
-                        return $disposisi . '
+                    // if ($item->status == 1  && Auth::user()->role_id == 2) {
+                    $disposisi = '';
+                    // if (Auth::user()->role_id == 2) {
+                    $disposisi = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '"><i class="fas fa-eye"></i> &nbsp; Lihat Catatan</a>';
+                    // }
+                    return $disposisi . '
                             <a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalDisposisi' . $item->id . '">
                                 <i class="fa fa-comment"></i>
                             </a>
                         ';
-                    } else {
-                        return '-';
-                    }
+                    // } else {
+                    //     return '-';
+                    // }
                 })
                 ->addColumn('status', function ($item) {
-                    return $item->status == 1 ? 'Sudah di validasi' : 'Belum di validasi';
+                    return $item->status == 1 ? 'Sudah validasi' : 'Belum validasi';
                 })
                 ->addColumn('tanggal', function ($item) {
                     return Carbon::parse($item->tanggal)->format("d/m/Y");
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action', 'proposal', 'status', 'tanggal', "disposisi"])
+                ->rawColumns(['action', 'proposal', 'status', 'tanggal', "disposisi", 'keterangan'])
                 ->make();
         }
         $letter = Letter::all();
-        $position = Position::all();
+        $position = Role::where('id', '!=', 1)->get();
 
         return view('pages.admin.out.index', [
             'letter' => $letter,
@@ -90,6 +98,15 @@ class ProposalOutController extends Controller
 
     public function store(Request $request)
     {
+
+        $user = Auth::user();
+        $createdAllowed = [2, 3, 4, 5]; // himpunan, ortom, komunitas, bem
+        if (!in_array($user->position->id, $createdAllowed)) {
+            return redirect()
+                ->route('proposal-keluar.index')
+                ->with('success', 'You dont have permission');
+        }
+
         DB::beginTransaction();
         $validatedData = $request->validate([
             'letter_no' => 'required',
@@ -107,12 +124,49 @@ class ProposalOutController extends Controller
         $validatedData['status'] = 0;
 
 
+        switch ($user->position->id) {
+            case '2': // himpunan
+                $nextApprovalBy = 5;
+                $validatedData['next_approval_by'] = 5;
+                break;
+
+            case '3': // ortom
+                $nextApprovalBy = 7;
+                $validatedData['next_approval_by'] = 7;
+                break;
+
+            case '4': // komunitas
+                $nextApprovalBy = 7;
+                $validatedData['next_approval_by'] = 7;
+                break;
+
+            case '5': // bem
+                $nextApprovalBy = 9;
+                $validatedData['next_approval_by'] = 9;
+                break;
+
+            default:
+                return;
+                break;
+        }
+
         $letter = Letter::create($validatedData);
-        LetterHistories::create([
+
+        /**
+         * created submission
+         */
+
+        LetterSubmission::create([
+            'letter_id' => $letter->id,
+            'created_by' => $user->id,
+            'next_approval_by' => $nextApprovalBy,
+        ]);
+
+        /* LetterHistories::create([
             'letter_id' => $letter->id,
             'member_id' => $letter->member_id,
             'description' => "Proposal dalam pengajuan, harap memunggu validasi",
-        ]);
+        ]); */
 
 
         DB::commit();

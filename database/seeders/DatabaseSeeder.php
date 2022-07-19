@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Member;
 use App\Models\Position;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,46 +17,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
 
+        $roles = ['Admin', 'Himpunan', 'Ortom', 'Komunitas', 'BEM', 'Kaprodi', 'Pembina', 'BKA', 'Sekretariat', 'Dekan', 'Wadek III', 'Wadek II', 'Keuangan'];
 
-        $users = [
-            [
-                'name' => 'Admin',
-                'email' => 'admin@app.com',
-                'password' => 'password',
-                'role_id' => 1
-            ],
-            [
-                'name' => 'Lembaga',
-                'email' => 'lembaga@app.com',
-                'password' => 'password',
-                'role_id' => 2
-            ],
-            [
-                'name' => 'Sekretariat',
-                'email' => 'sekretariat@app.com',
-                'password' => 'password',
-                'role_id' => 3
-            ],
-        ];
-
-        foreach ($users as $user) {
-            User::create([
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'password' => bcrypt($user['password']),
-                'role_id' => $user['role_id'],
-            ]);
+        foreach ($roles as $role) {
+            $storeRole = new Role();
+            $storeRole->name = $role;
+            $storeRole->status = 1;
+            $storeRole->save();
         }
 
-
-        Member::create([
-            'name' => 'Faisal',
-            'email' => 'email@kampus.com',
-            'position_id' => '1',
-        ]);
-
+        $collections = Role::all();
+        foreach ($collections as $item) {
+            User::create([
+                'name' => $item->name,
+                'email' => strtolower(str_replace(' ', '_', $item->name)) . '@app.com',
+                'password' => bcrypt('password'),
+                'role_id' => $item->id,
+            ]);
+        }
 
         $positions = [
             "Dekan",

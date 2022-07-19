@@ -8,6 +8,7 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +32,7 @@ class UserController extends Controller
                         <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
                             <i class="fas fa-edit"></i> &nbsp; Edit
                         </a>
-                        <form action="' . route('user.destroy', $item->id) . '" method="POST" onsubmit="return confirm('."'Anda akan menghapus item ini secara permanen dari situs anda?'".')">
+                        <form action="' . route('user.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini secara permanen dari situs anda?'" . ')">
                             ' . method_field('delete') . csrf_field() . '
                             <button class="btn btn-danger btn-xs">
                                 <i class="far fa-trash-alt"></i> &nbsp; Hapus
@@ -40,27 +41,26 @@ class UserController extends Controller
                     ';
                 })
                 ->editColumn('name', function ($item) {
-                    return $item->profile ? 
-                                '<div class="d-flex align-items-center">
-                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="'. Storage::url($item->profile) .'" /></div>'.
-                                    $item->name .'
-                                </div>' 
-                            : 
-                                '<div class="d-flex align-items-center">
-                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="https://ui-avatars.com/api/?name='.$item->name.'" /></div>'.
-                                    $item->name .'
+                    return $item->profile ?
+                        '<div class="d-flex align-items-center">
+                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="' . Storage::url($item->profile) . '" /></div>' .
+                        $item->name . '
+                                </div>'
+                        : '<div class="d-flex align-items-center">
+                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="https://ui-avatars.com/api/?name=' . $item->name . '" /></div>' .
+                        $item->name . '
                                 </div>';
                 })
                 ->editColumn('position', function ($item) {
-                    return $item->position_id != null ? $item->position->name : '-';
+                    return $item->role_id != null ? $item->position->name : '-';
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action','name'])
+                ->rawColumns(['action', 'name'])
                 ->make();
         }
 
-        $positions = Position::all();
+        $positions = Role::where('id', '!=', 1)->get();
         $users = User::where('id', '!=', 1)->get();
 
         return view('pages.admin.user.index', [
@@ -90,8 +90,8 @@ class UserController extends Controller
         User::create($validatedData);
 
         return redirect()
-                    ->route('user.index')
-                    ->with('success', 'Sukses! Data Pengguna Berhasil Disimpan');
+            ->route('user.index')
+            ->with('success', 'Sukses! Data Pengguna Berhasil Disimpan');
     }
 
     /**
@@ -104,7 +104,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return view('pages.admin.user.index',[
+        return view('pages.admin.user.index', [
             'user' => $user
         ]);
     }
@@ -113,7 +113,7 @@ class UserController extends Controller
     {
         $item = User::findOrFail($id);
 
-        return view('pages.admin.user.edit',[
+        return view('pages.admin.user.edit', [
             'item' => $item
         ]);
     }
@@ -127,12 +127,12 @@ class UserController extends Controller
         ]);
 
         $item = User::findOrFail($id);
-        
+
         $item->update($validatedData);
 
         return redirect()
-                ->route('user.index')
-                ->with('success', 'Sukses! Data Pengguna telah diperbarui');
+            ->route('user.index')
+            ->with('success', 'Sukses! Data Pengguna telah diperbarui');
     }
 
     public function destroy($id)
@@ -144,8 +144,8 @@ class UserController extends Controller
         $item->delete();
 
         return redirect()
-                ->route('user.index')
-                ->with('success', 'Sukses! Data Pengguna telah dihapus');
+            ->route('user.index')
+            ->with('success', 'Sukses! Data Pengguna telah dihapus');
     }
 
     public function upload_profile(Request $request)
@@ -159,7 +159,7 @@ class UserController extends Controller
 
         //dd($item);
 
-        if($request->file('profile')){
+        if ($request->file('profile')) {
             Storage::delete($item->profile);
             $item->profile = $request->file('profile')->store('assets/profile-images');
         }
@@ -167,14 +167,12 @@ class UserController extends Controller
         $item->save();
 
         return redirect()
-                ->route('user.index')
-                ->with('success', 'Sukses! Photo Pengguna telah diperbarui');
+            ->route('user.index')
+            ->with('success', 'Sukses! Photo Pengguna telah diperbarui');
     }
 
     public function change_password()
     {
         return view('pages.admin.user.change-password');
     }
-
-    
 }

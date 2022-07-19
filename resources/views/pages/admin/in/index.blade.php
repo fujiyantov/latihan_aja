@@ -53,12 +53,13 @@
                                 <thead>
                                     <tr>
                                         <th width="10">No.</th>
-                                        <th>No. Surat</th>
+                                        <th>Keterangan</th>
                                         <th>Perihal</th>
+                                        <th>No. Proposal</th>
                                         <th>Tanggal</th>
-                                        <th>Disposisi</th>
                                         <th>Proposal</th>
-                                        <th>Validasi</th>
+                                        <th>Disposisi</th>
+                                        {{-- <th>Validasi</th> --}}
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -145,32 +146,36 @@
                     searchable: false
                 },
                 {
-                    data: 'letter_no',
-                    name: 'nosurat'
+                    data: 'keterangan',
+                    name: 'keterangan'
                 },
                 {
                     data: 'title',
                     name: 'perihal'
                 },
                 {
-                    data: 'tanggal',
-                    name: 'tanggal'
+                    data: 'letter_no',
+                    name: 'nosurat'
                 },
                 {
-                    data: 'disposisi',
-                    name: 'disposisi'
+                    data: 'tanggal',
+                    name: 'tanggal'
                 },
                 {
                     data: 'proposal',
                     name: 'proposal'
                 },
                 {
+                    data: 'disposisi',
+                    name: 'disposisi'
+                },
+                /* {
                     data: 'validasi',
                     name: 'validasi',
                     orderable: false,
                     searcable: false,
                     width: '10%'
-                },
+                }, */
                 {
                     data: 'action',
                     name: 'action',

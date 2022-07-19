@@ -21,6 +21,7 @@ class CreateLettersTable extends Migration
             $table->string('date_approval')->nullable();
             $table->unsignedBigInteger('approval_by')->nullable();
             $table->unsignedBigInteger('member_id')->nullable();
+            $table->unsignedBigInteger('next_approval_by')->nullable();
             $table->string('letter_file')->nullable();
             $table->unsignedBigInteger('status')->default(0); // belum tervalidasi
             $table->timestamps();

@@ -24,7 +24,8 @@
         <!-- Main page content-->
         <div class="container-xl px-4 mt-n10">
             <!-- Example Colored Cards for Dashboard Demo-->
-            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 3)
+            <!-- 2 = admin, 3 -->
+            @if (Auth::user()->role_id == 1 || Auth::user()->role_id >= 9) 
                 <div class="row">
                     @if (Auth::user()->role_id == 1)
                         <div class="col-lg-12 col-xl-4 mb-4">

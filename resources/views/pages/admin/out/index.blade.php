@@ -27,7 +27,7 @@
                     <div class="card card-header-actions mb-4">
                         <div class="card-header">
                             List Proposal
-                            @if (Auth::user()->role_id == 2)
+                            @if (Auth::user()->role_id >= 2 && Auth::user()->role_id <= 5)
                                 <a class="btn btn-sm btn-primary" href="{{ route('department.create') }}"
                                     data-bs-toggle="modal" data-bs-target="#createModal">
                                     Tambah Data
@@ -59,11 +59,12 @@
                                 <thead>
                                     <tr>
                                         <th width="10">No.</th>
-                                        <th>No. Surat</th>
+                                        <th>Keterangan</th>
                                         <th>Perihal</th>
+                                        <th>No. Proposal</th>
                                         <th>Tanggal</th>
-                                        <th>Disposisi</th>
                                         <th>Proposal</th>
+                                        <th>Disposisi</th>
                                         <th>status</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -261,7 +262,6 @@
                                 </tbody>
                             </table>
                             <div class="col-md-12">
-                                {{-- <label for="post_id">Catatan Disposisi</label> --}}
                                 <h6 class="card-title">Catatan Disposisi</h6>
                                     <ul class="timeline">
                                         <li class="event">
@@ -301,24 +301,28 @@
                     searchable: false
                 },
                 {
-                    data: 'letter_no',
-                    name: 'no ajuan'
+                    data: 'keterangan',
+                    name: 'keterangan'
                 },
                 {
                     data: 'title',
                     name: 'perihal'
                 },
                 {
+                    data: 'letter_no',
+                    name: 'no ajuan'
+                },
+                {
                     data: 'tanggal',
                     name: 'tanggal'
                 },
                 {
-                    data: 'disposisi',
-                    name: 'disposisi'
-                },
-                {
                     data: 'proposal',
                     name: 'proposal'
+                },
+                {
+                    data: 'disposisi',
+                    name: 'disposisi'
                 },
                 {
                     data: 'status',
