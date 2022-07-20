@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $masuk = Letter::where('status', 0)->get()->count();
+        $masuk = Letter::get()->count();
         $keluar = Letter::where('status', 1)->get()->count();
 
         return view('pages.admin.dashboard',[

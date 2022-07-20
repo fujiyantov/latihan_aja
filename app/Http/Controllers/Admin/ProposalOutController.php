@@ -33,8 +33,8 @@ class ProposalOutController extends Controller
                     return $item->user->name;
                 })
                 ->addColumn('action', function ($item) {
-                    if (Auth::user()->role_id == 2) {
-                        return '
+
+                    return '
                             <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
                                 <i class="fas fa-edit"></i> &nbsp; Ubah
                             </a>
@@ -45,9 +45,6 @@ class ProposalOutController extends Controller
                                 </button>
                             </form>
                         ';
-                    } else {
-                        return '-';
-                    }
                 })
                 ->addColumn('proposal', function ($item) {
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
@@ -74,9 +71,9 @@ class ProposalOutController extends Controller
                 })
                 ->addColumn('status', function ($item) {
                     $status = $item->submissionLatest->where('status', 1)->first();
-                    
+
                     $str = 'Verifikasi';
-                    if ($status->approval->role_id == 9) {
+                    if ( isset($status) && $status->approval->role_id == 9) {
                         $str = 'Validasi';
                     }
 

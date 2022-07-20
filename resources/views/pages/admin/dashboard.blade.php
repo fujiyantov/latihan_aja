@@ -25,10 +25,10 @@
         <div class="container-xl px-4 mt-n10">
             <!-- Example Colored Cards for Dashboard Demo-->
             <!-- 2 = admin, 3 -->
-            @if (Auth::user()->role_id == 1 || Auth::user()->role_id >= 9) 
-                <div class="row">
-                    @if (Auth::user()->role_id == 1)
-                        <div class="col-lg-12 col-xl-4 mb-4">
+            {{-- @if (Auth::user()->role_id == 1 || Auth::user()->role_id >= 9) --}}
+            <div class="row">
+                {{-- @if (Auth::user()->role_id == 1) --}}
+                {{-- <div class="col-lg-12 col-xl-4 mb-4">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -44,15 +44,19 @@
                                     <div class=""><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
-                        </div>
-                    @endif
+                        </div> --}}
+                {{-- @endif --}}
+                @php
+                    $roleID = [1, 8, 9, 10, 11, 12, 13];
+                @endphp
+                @if (in_array(Auth::user()->role_id, $roleID))
                     <div class="col-lg-12 col-xl-4 mb-4">
                         <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="me-3">
                                         <div class="-75 small">Total Proposal Masuk</div>
-                                        <div class="text-lg fw-bold">{{ $keluar }}</div>
+                                        <div class="text-lg fw-bold">{{ $masuk }}</div>
                                     </div>
                                     <i class="feather-xl -50" data-feather="download"></i>
                                 </div>
@@ -63,7 +67,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-12 col-xl-4 mb-4">
+                @endif
+                {{-- <div class="col-lg-12 col-xl-4 mb-4">
                         <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -79,9 +84,9 @@
                                 <div class=""><i class="fas fa-angle-right"></i></div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            @endif
+                    </div> --}}
+            </div>
+            {{-- @endif --}}
             <div class="row">
                 <div class="col-xxl-12 col-xl-12 mb-4">
                     <div class="card h-100">
