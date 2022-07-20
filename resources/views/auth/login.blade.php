@@ -40,9 +40,9 @@
                                     <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
                                 </div>
                                 <!-- Form Group (remember password checkbox)-->
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <small>Do you have account? <a href="{{ route('register') }}">Register now</a></small>
-                                </div>
+                                </div> --}}
                                 <!-- Form Group (login box)-->
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="small" href="#">

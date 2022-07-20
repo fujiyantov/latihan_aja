@@ -263,20 +263,15 @@
                             </table>
                             <div class="col-md-12">
                                 <h6 class="card-title">Catatan Disposisi</h6>
-                                    <ul class="timeline">
+                                <ul class="timeline">
+                                    @foreach ($item->histories as $history)
                                         <li class="event">
-                                            <p>Registration</p>
-                                            <small>Get here on time, it's first come first serve</small>
+                                            <small>{{ $history->created_at }}</small>
+                                            <p><b>{{ $history->user->name }}</b></p>
+                                            <small>{{ $history->description }}</small>
                                         </li>
-                                        <li class="event">
-                                            <p>Opening Ceremony</p>
-                                            <small>Get ready for an exciting event, this will kick off.</small>
-                                        </li>
-                                        <li class="event">
-                                            <p>Opening Ceremony</p>
-                                            <small>Get ready for an exciting event, this will kick off.</small>
-                                        </li>
-                                    </ul>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                     </form>

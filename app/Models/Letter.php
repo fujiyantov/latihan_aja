@@ -36,4 +36,9 @@ class Letter extends Model
     {
         return $this->hasMany(LetterSubmission::class, 'letter_id')->latest();
     }
+
+    public function histories()
+    {
+        return $this->hasMany(LetterHistories::class, 'letter_id');
+    }
 }

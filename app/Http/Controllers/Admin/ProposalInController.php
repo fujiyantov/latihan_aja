@@ -78,8 +78,7 @@ class ProposalInController extends Controller
                         $verified == true
                     ) {
                         $verifikasi = 'Verified';
-                    }
-                    else if ($userLogin->role_id >= 5) {
+                    } else if ($userLogin->role_id >= 5) {
                         $verifikasi = '
                             <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan mem'.$wording.' proposal ini?'" . ')">
                                     ' . csrf_field() . '
@@ -327,20 +326,14 @@ class ProposalInController extends Controller
         $item = Letter::findorFail($id);
 
         // jika sudah divalidasi
-        if ($item->status == 1) {
-            LetterHistories::create([
-                'letter_id' => $item->id,
-                'member_id' => $request->input('member_id'),
-                'description' => $request->input('description'),
-            ]);
+        LetterHistories::create([
+            'letter_id' => $item->id,
+            'member_id' => $request->input('member_id'),
+            'description' => $request->input('description'),
+        ]);
 
-            return redirect()
-                ->route('proposal-masuk.index')
-                ->with('success', 'Sukses! Proposal berhasil disposisikan');
-        } else {
-            return redirect()
-                ->route('proposal-masuk.index')
-                ->with('success', 'Proposal belum tervalidasi');
-        }
+        return redirect()
+            ->route('proposal-masuk.index')
+            ->with('success', 'Sukses! Proposal berhasil disposisikan');
     }
 }
