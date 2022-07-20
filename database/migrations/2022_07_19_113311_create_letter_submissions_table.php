@@ -18,6 +18,7 @@ class CreateLetterSubmissionsTable extends Migration
             $table->unsignedBigInteger('letter_id');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('next_approval_by');
+            $table->unsignedBigInteger('status')->default(0);
             $table->timestamps();
         });
     }

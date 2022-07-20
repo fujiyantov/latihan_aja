@@ -10,8 +10,13 @@ class LetterSubmission extends Model
     use HasFactory;
 
     protected $fillable = [
-        'letter_id', 'created_by', 'next_approval_by'
+        'letter_id', 'created_by', 'next_approval_by', 'status'
     ];
+
+    public function approval()
+    {
+        return $this->belongsTo(User::class, 'next_approval_by');
+    }
 
     public function submission()
     {

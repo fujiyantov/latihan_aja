@@ -13,6 +13,7 @@ use App\Models\LetterHistories;
 use App\Models\LetterSubmission;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -72,7 +73,14 @@ class ProposalOutController extends Controller
                     // }
                 })
                 ->addColumn('status', function ($item) {
-                    return $item->status == 1 ? 'Sudah validasi' : 'Belum validasi';
+                    $status = $item->submissionLatest->where('status', 1)->first();
+                    
+                    $str = 'Verifikasi';
+                    if ($status->approval->role_id == 9) {
+                        $str = 'Validasi';
+                    }
+
+                    return isset($status) ? $str . ' ' . $status->approval->position->name : 'Belum Vefifikasi';
                 })
                 ->addColumn('tanggal', function ($item) {
                     return Carbon::parse($item->tanggal)->format("d/m/Y");
@@ -83,7 +91,7 @@ class ProposalOutController extends Controller
                 ->make();
         }
         $letter = Letter::all();
-        $position = Role::where('id', '!=', 1)->get();
+        $position = User::where('id', '!=', 1)->get();
 
         return view('pages.admin.out.index', [
             'letter' => $letter,

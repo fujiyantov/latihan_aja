@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
-use App\Models\Letter;
+use App\Models\Role;
 
+use App\Models\User;
+use App\Models\Letter;
 use App\Models\Member;
 use App\Models\Position;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Models\LetterHistories;
-use App\Http\Controllers\Controller;
 use App\Models\LetterSubmission;
-use App\Models\Role;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -61,19 +63,32 @@ class ProposalInController extends Controller
                 })
                 ->addColumn('action', function ($item) {
                     $verifikasi = '';
-                    // if (Auth::user()->role_id >= 5) {
+                    $wording = Auth::user()->role_id == 9 ? 'validasi' : 'verifikasi';
 
-                        // if (Auth::user()->role_id == 5 && Auth::user()->role_id != $item->user->role_id) {
-                            $verifikasi = '
-                                <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan memvalidasi proposal ini?'" . ')">
-                                        ' . csrf_field() . '
-                                        <button class="btn btn-success btn-xs">
-                                            <i class="fa fa-pen"></i> &nbsp; Validasi
-                                        </button>
-                                    </form>
-                                ';
-                        // }
-                    // }
+                    $verified = false;
+                    $checkVerified = $item->submission->where('next_approval_by', Auth::user()->role_id)->first();
+                    if (isset($checkVerified) && $checkVerified->status == 1) {
+                        $verified = true;
+                    }
+
+                    $userLogin = Auth::user();
+                    if ($userLogin->role_id == 5 && $item->user->role_id == 5) {
+                        $verifikasi = '';
+                    } else if (
+                        $verified == true
+                    ) {
+                        $verifikasi = 'Verified';
+                    }
+                    else if ($userLogin->role_id >= 5) {
+                        $verifikasi = '
+                            <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan mem'.$wording.' proposal ini?'" . ')">
+                                    ' . csrf_field() . '
+                                    <button class="btn btn-success btn-xs">
+                                        <i class="fa fa-pen"></i> &nbsp; ' . $wording . '
+                                    </button>
+                                </form>
+                            ';
+                    }
 
                     return $verifikasi . '
                     <form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
@@ -85,11 +100,14 @@ class ProposalInController extends Controller
                     ';
                 })
                 ->addColumn('validasi', function ($item) {
+
+                    $wording = Auth::user()->role_id == 9 ? 'validasi' : 'verifikasi';
+
                     return '
-                    <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan memvalidasi proposal ini?'" . ')">
+                    <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan mem'.$wording.' proposal ini?'" . ')">
                             ' . csrf_field() . '
                             <button class="btn btn-success btn-xs">
-                                <i class="fa fa-pen"></i> &nbsp; Validasi
+                                <i class="fa fa-pen"></i> &nbsp; ' . $wording . '
                             </button>
                         </form>
                     ';
@@ -125,7 +143,7 @@ class ProposalInController extends Controller
                 ->make();
         }
         $letter = Letter::all();
-        $position = Role::where('id', '!=', 1)->get();
+        $position = User::where('id', '!=', 1)->get();
 
         return view('pages.admin.in.index', [
             'letter' => $letter,
@@ -271,19 +289,31 @@ class ProposalInController extends Controller
             }
         }
 
+        DB::beginTransaction();
+
+        $updateVaidasi = LetterSubmission::where([
+            ['letter_id', $id],
+            ['next_approval_by', $user->position->id],
+        ])
+            ->latest()
+            ->first();
+
+        $updateVaidasi->status = 1;
+        $updateVaidasi->save();
+
         /**
          * created submission
          */
-
         LetterSubmission::create([
             'letter_id' => $letter->id,
             'created_by' => $user->id,
             'next_approval_by' => $nextApprovalBy,
         ]);
+        DB::commit();
 
         return redirect()
             ->route('proposal-masuk.index')
-            ->with('success', 'Sukses! 1 Proposal berhasil divalidasi');
+            ->with('success', 'Sukses!');
     }
 
     public function disposisi(Request $request, $id)
