@@ -105,6 +105,13 @@
                         </div>
                         <div class="mb-3">
                             <div class="col-md-12">
+                                <label for="post_id">Password</label>
+                                <input type="password" name="password" class="form-control" placeholder="Masukan Password"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-md-12">
                                 <label for="post_id">Jabatan</label>
                                 <select name="position_id" class="form-control">
                                     @foreach ($positions as $position)
@@ -154,6 +161,12 @@
                                     <label for="post_id">Email </label>
                                     <input type="email" name="email" value="{{ $email }}"
                                         class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="col-md-12">
+                                    <label for="post_id">Password</label>
+                                    <input type="password" name="password" class="form-control" placeholder="Masukan Password">
                                 </div>
                             </div>
                             <div class="mb-3">

@@ -25,8 +25,12 @@ class ProposalOutController extends Controller
         $user = Auth::user();
 
         if (request()->ajax()) {
-            $query = Letter::where('member_id', $user->id)
-                ->latest()->get();
+            if ($user->role_id == 1) {
+                $query = Letter::latest()->get();
+            } else {
+                $query = Letter::where('member_id', $user->id)
+                    ->latest()->get();
+            }
 
             return Datatables::of($query)
                 ->addColumn('keterangan', function ($item) {
@@ -34,16 +38,23 @@ class ProposalOutController extends Controller
                 })
                 ->addColumn('action', function ($item) {
 
+
+                    $deleteBtn = '<form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
+                            ' . method_field('delete') . csrf_field() . '
+                            <button class="btn btn-danger btn-xs">
+                                <i class="far fa-trash-alt"></i> &nbsp; Hapus
+                            </button>
+                        </form>';
+
+                    if ($item->status == 1) {
+                        $deleteBtn = '';
+                    }
+
                     return '
                             <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
                                 <i class="fas fa-edit"></i> &nbsp; Ubah
                             </a>
-                            <form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
-                                ' . method_field('delete') . csrf_field() . '
-                                <button class="btn btn-danger btn-xs">
-                                    <i class="far fa-trash-alt"></i> &nbsp; Hapus
-                                </button>
-                            </form>
+                            ' . $deleteBtn . '
                         ';
                 })
                 ->addColumn('proposal', function ($item) {
@@ -55,25 +66,20 @@ class ProposalOutController extends Controller
                     ';
                 })
                 ->addColumn('disposisi', function ($item) {
-                    // if ($item->status == 1  && Auth::user()->role_id == 2) {
-                    $disposisi = '';
-                    // if (Auth::user()->role_id == 2) {
+
                     $disposisi = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '"><i class="fas fa-eye"></i> &nbsp; Lihat Catatan</a>';
-                    // }
+
                     return $disposisi . '
                             <a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalDisposisi' . $item->id . '">
                                 <i class="fa fa-comment"></i>
                             </a>
                         ';
-                    // } else {
-                    //     return '-';
-                    // }
                 })
                 ->addColumn('status', function ($item) {
                     $status = $item->submissionLatest->where('status', 1)->first();
 
                     $str = 'Verifikasi';
-                    if ( isset($status) && $status->approval->role_id == 9) {
+                    if (isset($status) && $status->approval->role_id == 9) {
                         $str = 'Validasi';
                     }
 

@@ -30,10 +30,9 @@ class ProposalInController extends Controller
          * Kaprodi = [2,5,6]
          * Kaprodi = [2,5,6,8]
          * Pembina = [3,7]
-         * Sekre = [ < 9]
          * Dst...
          */
-
+        // himpunan ke bem, bem dekan verifikasi sekre, admin user password proposal, pdf
         if (request()->ajax()) {
 
             if (in_array($user->role_id, [2, 3, 4])) { // Pengajuan Awal
@@ -43,10 +42,15 @@ class ProposalInController extends Controller
                         $sub->where('role_id', $user->role_id);
                     })
                     ->get();
+            } else if ($user->role_id == 1) {
+
+                $query = Letter::latest()->get();
             } else if ($user->role_id == 5) { // BEM
 
                 $query = Letter::latest()
-                    ->whereIn('member_id', [2, 5])
+                    ->whereHas('user', function ($res) use ($user) {
+                        $res->whereIn('role_id', [2, 5]);
+                    })
                     ->get();
             } else { // Verifikasi or Validasi
 
@@ -89,13 +93,20 @@ class ProposalInController extends Controller
                             ';
                     }
 
-                    return $verifikasi . '
-                    <form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
+
+                    $deleteBtn = '<form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
                             ' . method_field('delete') . csrf_field() . '
                             <button class="btn btn-danger btn-xs">
                                 <i class="far fa-trash-alt"></i> &nbsp; Hapus
                             </button>
-                        </form>
+                        </form>';
+
+                    if ($item->status == 1) {
+                        $deleteBtn = '';
+                    }
+
+                    return $verifikasi . '
+                    ' . $deleteBtn . '
                     ';
                 })
                 ->addColumn('validasi', function ($item) {
@@ -112,7 +123,14 @@ class ProposalInController extends Controller
                     ';
                 })
                 ->addColumn('disposisi', function ($item) {
-                    // if (Auth::user()->role_id == 3) {
+                    $disposisi = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '"><i class="fas fa-eye"></i> &nbsp; Lihat Catatan</a>';
+
+                    return $disposisi . '
+                            <a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalDisposisi' . $item->id . '">
+                                <i class="fa fa-comment"></i>
+                            </a>
+                        ';
+                    /* // if (Auth::user()->role_id == 3) {
                     // <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModalCatatan' . $item->id . '">
                     //     <i class="fas fa-eye"></i> &nbsp; Lihat Catatan
                     // </a>
@@ -123,7 +141,7 @@ class ProposalInController extends Controller
                         ';
                     // } else {
                     //     return '-';
-                    // }
+                    // } */
                 })
                 ->addColumn('proposal', function ($item) {
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
@@ -227,10 +245,11 @@ class ProposalInController extends Controller
 
         // IF Letter created by BEM
 
-        if ($letter->user->role_id == 5) {
+        if ($letter->user->role_id == 5 && $user->position->id < 5) {
 
             $nextApprovalBy = 9;
             $validatedData['next_approval_by'] = 9;
+
         } else {
 
             switch ($user->position->id) {
@@ -300,6 +319,10 @@ class ProposalInController extends Controller
         $updateVaidasi->status = 1;
         $updateVaidasi->save();
 
+        $letterUpdate = Letter::where('id', $id)->first();
+        $letterUpdate->status = 1;
+        $letterUpdate->save();
+
         /**
          * created submission
          */
@@ -308,6 +331,7 @@ class ProposalInController extends Controller
             'created_by' => $user->id,
             'next_approval_by' => $nextApprovalBy,
         ]);
+
         DB::commit();
 
         return redirect()

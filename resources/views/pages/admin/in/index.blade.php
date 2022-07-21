@@ -71,7 +71,7 @@
             </div>
         </div>
     </main>
-    {{-- Modal Update --}}
+    
     @foreach ($letter as $item)
         @php
             $id = $item->id;
@@ -79,6 +79,8 @@
             $date = $item->date;
             $letter_no = $item->letter_no;
         @endphp
+
+        {{-- Modal Update --}}
         <div class="modal fade" id="updateModal{{ $id }}" role="dialog" aria-labelledby="createModal"
             aria-hidden="true" style="overflow:hidden;">
             <div class="modal-dialog" role="document">
@@ -123,6 +125,112 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Disposisi --}}
+        <div class="modal fade" id="updateModalDisposisi{{ $id }}" role="dialog" aria-labelledby="createModal"
+            aria-hidden="true" style="overflow:hidden;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModal{{ $id }}">Disposisi Proposal</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('disposisi', $item->id) }}" method="post">
+                        @csrf
+                        <div class="modal-body">
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>No Surat</th>
+                                        <td>:</td>
+                                        <td>{{ $letter_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Perihal</th>
+                                        <td>:</td>
+                                        <td>{{ $title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Disposisi Kepada</th>
+                                        <td>:</td>
+                                        <td>
+                                            <select name="member_id" id="" class="form-control">
+                                                @foreach ($position as $val)
+                                                    <option value="{{ $val->id }}">{{ $val->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                <label for="post_id">Comment</label>
+                                <textarea name="description" class="form-control" placeholder="comment here..." cols="30" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Histories --}}
+        <div class="modal fade" id="updateModalCatatan{{ $id }}" role="dialog" aria-labelledby="createModal"
+            aria-hidden="true" style="overflow:hidden;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModal{{ $id }}">Lihat Catatan Disposisi</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="#" method="post">
+                        @csrf
+                        <div class="modal-body">
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>No Surat</th>
+                                        <td>:</td>
+                                        <td>{{ $letter_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <td>:</td>
+                                        <td>{{ $item->date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dari</th>
+                                        <td>:</td>
+                                        <td>{{ $item->user->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Perihal</th>
+                                        <td>:</td>
+                                        <td>{{ $title }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                <h6 class="card-title">Catatan Disposisi</h6>
+                                <ul class="timeline">
+                                    @foreach ($item->histories as $history)
+                                        <li class="event">
+                                            <small>{{ $history->created_at }}</small>
+                                            <p><b>{{ $history->user->name }}</b></p>
+                                            <small>{{ $history->description }}</small>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </form>
                 </div>

@@ -80,7 +80,7 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'position_id' => 'required|numeric|min:1',
             'email' => 'required|email|unique:users',
-            // 'password' => 'required|min:5|max:255',
+            'password' => 'required|min:5|max:255',
         ]);
 
         // $validatedData['password'] = Hash::make($validatedData['password']);
@@ -124,11 +124,16 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email',
             'position_id' => 'required|numeric|min:1',
+            'password' => 'min:5|max:255',
         ]);
 
         $item = User::findOrFail($id);
-
-        $item->update($validatedData);
+        $item->name = $request->name;
+        $item->email = $request->email;
+        $item->position_id = $request->position_id;
+        $item->password = Hash::make($request->password);
+        $item->save();
+        // $item->update($validatedData);
 
         return redirect()
             ->route('user.index')
