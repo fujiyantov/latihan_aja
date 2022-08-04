@@ -71,7 +71,7 @@
             </div>
         </div>
     </main>
-    
+
     @foreach ($letter as $item)
         @php
             $id = $item->id;
@@ -221,15 +221,34 @@
                             </table>
                             <div class="col-md-12">
                                 <h6 class="card-title">Catatan Disposisi</h6>
-                                <ul class="timeline">
-                                    @foreach ($item->histories as $history)
-                                        <li class="event">
-                                            <small>{{ $history->created_at }}</small>
-                                            <p><b>{{ $history->user->name }}</b></p>
-                                            <small>{{ $history->description }}</small>
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                <div class="overflow-auto" style="max-height: 500px">
+                                    <ul class="timeline list-group list-group-flush">
+                                        @foreach ($item->histories as $history)
+                                            {{-- @for ($i = 0; $i < 40; $i++)
+                                            <li class="event list-group-item" style="background: #F7F9FA">
+                                                <a href="">
+                                                    <h6>asd <i data-feather="arrow-right"></i>
+                                                        asdasd</h6>
+                                                </a>
+                                                <small><i data-feather="calendar"></i>
+                                                    asdasd</small> <br />
+                                                <small class="text-muted">asdads</small>
+
+                                            </li>
+                                        @endfor --}}
+                                            <li class="event list-group-item" style="background: #F7F9FA">
+                                                <a href="">
+                                                    <h6>{{ $history->sendBy->name }} <i data-feather="arrow-right"></i>
+                                                        {{ $history->user->name }}</h6>
+                                                </a>
+                                                <small><i data-feather="calendar"></i>
+                                                    {{ $history->created_at->format('d M Y H:i') }}</small> <br />
+                                                <small class="text-muted">{{ $history->description }}</small>
+
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </form>

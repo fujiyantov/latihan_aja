@@ -26,6 +26,9 @@ class User extends Authenticatable
         'profile',
         'role_id',
         'position_id',
+        'dana_received',
+        'dana_used',
+        'dana_sisa',
     ];
 
     /**

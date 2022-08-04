@@ -13,11 +13,19 @@ class LetterHistories extends Model
         'letter_id',
         'member_id',
         'description',
+        'send_by',
+        'is_read',
+        // 'status',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'member_id');
+    }
+
+    public function sendBy()
+    {
+        return $this->belongsTo(User::class, 'send_by');
     }
 
     public function letter()

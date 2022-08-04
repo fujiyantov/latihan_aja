@@ -39,8 +39,7 @@
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Data User
                 </a> --}}
-                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}"
-                    href="{{ route('user.index') }}">
+                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}" href="{{ route('user.index') }}">
                     <div class="nav-link-icon"><i data-feather="users"></i></div>
                     Data User
                 </a>
@@ -61,6 +60,15 @@
                 <div class="nav-link-icon"><i data-feather="download"></i></div>
                 Proposal Masuk
             </a>
+
+            @if (Auth::user()->role_id == 13)
+                <a class="nav-link {{ request()->is('admin/finances*') ? 'active' : '' }}"
+                    href="{{ route('finances.index') }}">
+                    <div class="nav-link-icon"><i data-feather="credit-card"></i></div>
+                    Status Keuangan
+                </a>
+            @endif
+
             <a class="nav-link {{ request()->is('admin/setting*') ? 'active' : '' }}"
                 href="{{ route('setting.index') }}">
                 <div class="nav-link-icon"><i data-feather="lock"></i></div>

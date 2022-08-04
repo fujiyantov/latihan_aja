@@ -95,11 +95,11 @@
                                 <input type="text" name="letter_no" class="form-control"
                                     placeholder="Masukan Namor Ajuan" required>
                             </div>
-                            <div class="col-md-12">
+                            {{-- <div class="col-md-12">
                                 <label for="post_id">Tanggal Pengajuan</label>
                                 <input type="date" name="date" class="form-control"
                                     placeholder="Masukan Tanggal Pengajuan" required>
-                            </div>
+                            </div> --}}
                             <div class="col-md-12">
                                 <label for="post_id">Perihal</label>
                                 <input type="text" name="title" class="form-control" placeholder="Masukan Perihal"
@@ -263,15 +263,34 @@
                             </table>
                             <div class="col-md-12">
                                 <h6 class="card-title">Catatan Disposisi</h6>
-                                <ul class="timeline">
-                                    @foreach ($item->histories as $history)
-                                        <li class="event">
-                                            <small>{{ $history->created_at }}</small>
-                                            <p><b>{{ $history->user->name }}</b></p>
-                                            <small>{{ $history->description }}</small>
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                <div class="overflow-auto" style="max-height: 500px">
+                                    <ul class="timeline list-group list-group-flush">
+                                        {{-- @for ($i = 0; $i < 40; $i++)
+                                            <li class="event list-group-item" style="background: #F7F9FA">
+                                                <a href="">
+                                                    <h6>asd <i data-feather="arrow-right"></i>
+                                                        asdasd</h6>
+                                                </a>
+                                                <small><i data-feather="calendar"></i>
+                                                    asdasd</small> <br />
+                                                <small class="text-muted">asdads</small>
+
+                                            </li>
+                                        @endfor --}}
+                                        @foreach ($item->histories as $history)
+                                            <li class="event list-group-item" style="background: #F7F9FA">
+                                                <a href="">
+                                                    <h6>{{ $history->sendBy->name }} <i data-feather="arrow-right"></i>
+                                                        {{ $history->user->name }}</h6>
+                                                </a>
+                                                <small><i data-feather="calendar"></i>
+                                                    {{ $history->created_at->format('d M Y H:i') }}</small> <br />
+                                                <small class="text-muted">{{ $history->description }}</small>
+
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </form>

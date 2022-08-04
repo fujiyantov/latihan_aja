@@ -67,6 +67,7 @@ class ProposalInController extends Controller
                 })
                 ->addColumn('action', function ($item) {
                     $verifikasi = '';
+                    $deleteBtn = '';
                     $wording = Auth::user()->role_id == 9 ? 'validasi' : 'verifikasi';
 
                     $verified = false;
@@ -82,6 +83,7 @@ class ProposalInController extends Controller
                         $verified == true
                     ) {
                         $verifikasi = 'Verified';
+                        $deleteBtn = '';
                     } else if ($userLogin->role_id >= 5) {
                         $verifikasi = '
                             <form action="' . route('validasi', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan mem'.$wording.' proposal ini?'" . ')">
@@ -94,12 +96,12 @@ class ProposalInController extends Controller
                     }
 
 
-                    $deleteBtn = '<form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
+                    /* $deleteBtn = '<form action="' . route('proposal-keluar.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
                             ' . method_field('delete') . csrf_field() . '
                             <button class="btn btn-danger btn-xs">
                                 <i class="far fa-trash-alt"></i> &nbsp; Hapus
                             </button>
-                        </form>';
+                        </form>'; */
 
                     if ($item->status == 1) {
                         $deleteBtn = '';
@@ -152,7 +154,7 @@ class ProposalInController extends Controller
                     ';
                 })
                 ->addColumn('tanggal', function ($item) {
-                    return Carbon::parse($item->date)->format("d/m/Y");
+                    return Carbon::parse($item->date)->format("d/F/Y");
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
@@ -354,6 +356,7 @@ class ProposalInController extends Controller
             'letter_id' => $item->id,
             'member_id' => $request->input('member_id'),
             'description' => $request->input('description'),
+            'send_by' => Auth::user()->id,
         ]);
 
         return redirect()

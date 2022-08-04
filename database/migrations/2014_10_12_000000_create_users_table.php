@@ -22,6 +22,9 @@ class CreateUsersTable extends Migration
             $table->string('profile')->nullable();
             $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('position_id')->nullable();
+            $table->string('dana_received')->nullable();
+            $table->string('dana_used')->nullable();
+            $table->string('dana_sisa')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

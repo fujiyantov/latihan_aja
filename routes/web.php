@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\DisposisiController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\ProposalInController;
 use App\Http\Controllers\Admin\ProposalOutController;
+use App\Http\Controllers\FinanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,11 +44,13 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin-dashboard');
 
-        //
         // Route::resource('/disposisi', DisposisiController::class);
         Route::resource('/proposal-keluar', ProposalOutController::class);
         Route::resource('/proposal-masuk', ProposalInController::class);
         Route::resource('/anggota', MemberController::class);
+
+        // Finance
+        Route::resource('/finances', FinanceController::class);
 
         // next
         Route::resource('/department', DepartmentController::class);

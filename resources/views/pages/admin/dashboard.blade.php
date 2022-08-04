@@ -68,6 +68,54 @@
                         </div>
                     </div>
                 @endif
+
+                @php
+                    $roleID = [2,3,4,5];
+                @endphp
+                @if (in_array(Auth::user()->role_id, $roleID))
+                    <div class="col-lg-12 col-xl-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="me-3">
+                                        <div class="-75 small">Total Dana diterima</div>
+                                        <div class="text-lg fw-bold">{{ number_format($tdd) }}</div>
+                                    </div>
+                                    <i class="feather-xl -50" data-feather="credit-card"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-xl-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="me-3">
+                                        <div class="-75 small">Total Dana yang digunakan</div>
+                                        <div class="text-lg fw-bold">{{ number_format($tdy) }}</div>
+                                    </div>
+                                    <i class="feather-xl -50" data-feather="credit-card"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-xl-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="me-3">
+                                        <div class="-75 small">Total Sisa Dana</div>
+                                        <div class="text-lg fw-bold">{{ number_format($tsd) }}</div>
+                                    </div>
+                                    <i class="feather-xl -50" data-feather="credit-card"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- <div class="col-lg-12 col-xl-4 mb-4">
                         <div class="card h-100">
                             <div class="card-body">
@@ -95,7 +143,7 @@
                                 <div class="col-xl-8 col-xxl-12">
                                     <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
                                         <h1 class="text-primary">Selamat Datang {{ Auth::user()->name }}!</h1>
-                                        <p class="text-gray-700 mb-0">Di Website Aplikasi Surat Masuk dan Keluar</p>
+                                        <p class="text-gray-700 mb-0">Di Website Aplikasi Proposal</p>
                                     </div>
                                 </div>
                                 <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid"

@@ -17,6 +17,8 @@ class CreateLetterHistoriesTable extends Migration
             $table->increments('id');
             $table->unsignedBigInteger('letter_id');
             $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('send_by');
+            $table->unsignedBigInteger('is_read')->default(0);
             $table->text('description')->nullable();
             $table->timestamps();
         });

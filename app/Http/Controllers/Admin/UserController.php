@@ -83,9 +83,9 @@ class UserController extends Controller
             'password' => 'required|min:5|max:255',
         ]);
 
-        // $validatedData['password'] = Hash::make($validatedData['password']);
-        $validatedData['password'] = Hash::make('password');
-        $validatedData['role_id'] = 2;
+        $validatedData['password'] = Hash::make($validatedData['password']);
+        // $validatedData['password'] = Hash::make('password');
+        $validatedData['role_id'] = $validatedData['position_id'];
 
         User::create($validatedData);
 
@@ -131,7 +131,9 @@ class UserController extends Controller
         $item->name = $request->name;
         $item->email = $request->email;
         $item->position_id = $request->position_id;
-        $item->password = Hash::make($request->password);
+        if ($request->password) {
+            $item->password = Hash::make($request->password);
+        }
         $item->save();
         // $item->update($validatedData);
 

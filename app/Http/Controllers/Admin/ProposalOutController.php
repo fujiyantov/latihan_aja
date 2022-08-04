@@ -46,16 +46,16 @@ class ProposalOutController extends Controller
                             </button>
                         </form>';
 
+                    $ubahButton = '<a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
+                                <i class="fas fa-edit"></i> &nbsp; Ubah
+                            </a>';
+
                     if ($item->status == 1) {
                         $deleteBtn = '';
+                        $ubahButton = '';
                     }
 
-                    return '
-                            <a class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#updateModal' . $item->id . '">
-                                <i class="fas fa-edit"></i> &nbsp; Ubah
-                            </a>
-                            ' . $deleteBtn . '
-                        ';
+                    return $ubahButton . $deleteBtn;
                 })
                 ->addColumn('proposal', function ($item) {
                     $letterUrl = Storage::url('/assets/letter-file/' . $item->letter_file);
@@ -86,7 +86,7 @@ class ProposalOutController extends Controller
                     return isset($status) ? $str . ' ' . $status->approval->position->name : 'Belum Vefifikasi';
                 })
                 ->addColumn('tanggal', function ($item) {
-                    return Carbon::parse($item->tanggal)->format("d/m/Y");
+                    return Carbon::parse($item->date)->format("d/F/Y");
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
@@ -122,7 +122,7 @@ class ProposalOutController extends Controller
         $validatedData = $request->validate([
             'letter_no' => 'required',
             'title' => 'required',
-            'date' => 'required',
+            // 'date' => 'required',
             'letter_file' => 'required|mimes:pdf,png,jpg,jpeg|file',
         ]);
 
@@ -133,6 +133,7 @@ class ProposalOutController extends Controller
 
         $validatedData['member_id'] = Auth::user()->id;
         $validatedData['status'] = 0;
+        $validatedData['date'] = date('Y-m-d');
 
 
         switch ($user->position->id) {
@@ -203,7 +204,7 @@ class ProposalOutController extends Controller
         $validatedData = $request->validate([
             'letter_no' => 'required',
             'title' => 'required',
-            'date' => 'required',
+            // 'date' => 'required',
         ]);
 
         $letter = Letter::findOrFail($id);
@@ -217,7 +218,7 @@ class ProposalOutController extends Controller
 
         $letter->letter_no = $request->input('letter_no');
         $letter->title = $request->input('title');
-        $letter->date = $request->input('date');
+        // $letter->date = $request->input('date');
         $letter->save();
 
         DB::commit();
