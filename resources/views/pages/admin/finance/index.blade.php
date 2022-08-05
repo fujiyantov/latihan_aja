@@ -42,7 +42,8 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
                                         <label for="post_id">Pilih Lembaga</label>
-                                        <select name="lembaga_id" id="lembaga" class="form-control">
+                                        <select name="lembaga_id" id="lembaga" class="form-control" required>
+                                            <option value="">Pilih Lembaga</option>
                                             @foreach ($collections as $item)
                                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
@@ -50,13 +51,13 @@
                                     </div>
                                     <div class="col-md-12 mb-4">
                                         <label for="post_id">Input Dana Diterima</label>
-                                        <input type="number" name="dana_received" class="form-control"
-                                            placeholder="Masukan Dana diterima">
+                                        <input type="number" name="dana_received" class="form-control dana_received"
+                                            placeholder="Masukan Dana diterima" required>
                                     </div>
                                     <div class="col-md-12 mb-4">
                                         <label for="post_id">Input Data yang digunakan</label>
-                                        <input type="number" name="dana_used" class="form-control"
-                                            placeholder="Masukan Dana yang digunakan">
+                                        <input type="number" name="dana_used" class="form-control dana_used"
+                                            placeholder="Masukan Dana yang digunakan" required>
                                     </div>
                                     <div class="col-md-12 mb-4">
                                         <button class="btn btn-primary" type="submit"><i data-feather="upload"></i>
@@ -66,8 +67,8 @@
                                     <br />
                                     <div class="col-md-12">
                                         <label for="post_id">Sisa Dana</label>
-                                        <input type="number" name="sisa_dana" class="form-control sisa_dana disabled"
-                                            placeholder="Sisa Dana">
+                                        <input type="number" name="sisa_dana"
+                                            class="form-control sisa_dana readonly dana_sisa" disabled placeholder="Sisa Dana">
                                     </div>
                                 </div>
                             </form>
@@ -82,7 +83,23 @@
 @push('addon-script')
     <script>
         $('#lembaga').on('change', function() {
-            // TODO :: ajax
+
+            $('.dana_received').val('')
+            $('.dana_used').val('')
+            $('.dana_sisa').val('')
+
+            let lembagaID = $('#lembaga').val();
+            let base_url = window.location.origin;
+
+            $.ajax({
+                method: "GET",
+                url: base_url + "/admin/finances/" + lembagaID,
+                success: function(result) {
+                    $('.dana_received').val(result.dana_received)
+                    $('.dana_used').val(result.dana_used)
+                    $('.dana_sisa').val(result.dana_sisa)
+                }
+            });
         })
     </script>
 @endpush

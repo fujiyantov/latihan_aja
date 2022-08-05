@@ -34,6 +34,7 @@ class FinanceController extends Controller
 
         $letter = User::findOrFail($request->input('lembaga_id'));
         $dana_received = $request->input('dana_received');
+        
         if (isset($dana_received) && $request->input('dana_received') != NULL) {
             $letter->dana_received = $request->input('dana_received');
         }
@@ -43,12 +44,23 @@ class FinanceController extends Controller
             $letter->dana_used = $request->input('dana_used');
         }
 
-        $hitung  = $request->input('dana_received') - $request->input('dana_used');
-
-        if ($hitung < 1) {
-            $hitung = 0;
+        if ($dana_used > $dana_received) {
+            return redirect()
+                ->route('finances.index')
+                ->with('success', 'Data yang digunakan lebih besar');
         }
-        $letter->dana_sisa = $hitung;
+
+        if (isset($dana_received) && isset($dana_used)) {
+
+            $hitung  = $request->input('dana_received') - $request->input('dana_used');
+
+            if ($hitung < 1) {
+                $hitung = 0;
+            }
+
+
+            $letter->dana_sisa = $hitung;
+        }
 
         $letter->save();
 
@@ -57,5 +69,15 @@ class FinanceController extends Controller
         return redirect()
             ->route('finances.index')
             ->with('success', 'Sukses! Data berhasil diupdate');
+    }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return [
+            "dana_received" => $user->dana_received,
+            "dana_used" => $user->dana_used,
+            "dana_sisa" => $user->dana_sisa,
+        ];
     }
 }

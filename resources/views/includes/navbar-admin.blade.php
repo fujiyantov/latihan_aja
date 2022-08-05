@@ -35,6 +35,20 @@
                 aria-labelledby="navbarDropdownUserImage">
                 <ul class="list-group list-group-flush p-2" style="width: 25rem;">
                     <div class="overflow-auto" style="max-height: 500px">
+
+                       {{--  @for ($i = 0; $i < 40; $i++)
+                            <li class="list-group-item" style="background: #F7F9FA">
+                                <a href="">
+                                    <h6>contoh <i data-feather="arrow-right"></i>
+                                        aja</h6>
+                                </a>
+                                <small><i data-feather="calendar"></i>
+                                    tanggal</small> <br />
+                                <small class="text-muted">kasdjalkjsdkasd</small>
+
+                            </li>
+                        @endfor --}}
+
                         @php
                             $collections = notifCountMessage();
                         @endphp
