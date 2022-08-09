@@ -43,6 +43,7 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin-dashboard');
+        Route::get('/read/{id}', [DashboardController::class, 'read'])->name('is-read');
 
         // Route::resource('/disposisi', DisposisiController::class);
         Route::resource('/proposal-keluar', ProposalOutController::class);
@@ -51,6 +52,7 @@ Route::prefix('admin')
 
         // Finance
         Route::resource('/finances', FinanceController::class);
+        Route::post('/dana/{item}', [ProposalInController::class, 'updateDana'])->name('dana');
 
         // next
         Route::resource('/department', DepartmentController::class);

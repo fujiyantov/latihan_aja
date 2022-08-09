@@ -55,9 +55,9 @@
                                             placeholder="Masukan Dana diterima" required>
                                     </div>
                                     <div class="col-md-12 mb-4">
-                                        <label for="post_id">Input Data yang digunakan</label>
+                                        <label for="post_id">Input Dana yang digunakan</label>
                                         <input type="number" name="dana_used" class="form-control dana_used"
-                                            placeholder="Masukan Dana yang digunakan" required>
+                                            placeholder="0" readonly required>
                                     </div>
                                     <div class="col-md-12 mb-4">
                                         <button class="btn btn-primary" type="submit"><i data-feather="upload"></i>

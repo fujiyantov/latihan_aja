@@ -28,7 +28,7 @@
             <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
                 href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                <span class="badge text-danger ms-auto">{{ notifCount() }}<i data-feather="bell"
+                <span class="badge text-danger ms-auto btn-notif"><span class="notif-value">{{ notifCount() }}</span><i data-feather="bell"
                         style="color: blue"></i></span>
             </a>
             <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up"
@@ -116,3 +116,18 @@
         </li>
     </ul>
 </nav>
+@push('addon-script')
+    <script>
+        $('.btn-notif').on('click', function() {      
+            var userID = '{{ Auth::user()->id }}'     
+            let base_url = window.location.origin; 
+            $.ajax({
+                method: "get",
+                url: base_url + "/admin/read/" + userID,
+                success: function(result) {
+                    $('.notif-value').text('0');
+                }
+            });
+        })
+    </script>
+@endpush

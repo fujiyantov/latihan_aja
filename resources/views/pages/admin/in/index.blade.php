@@ -61,6 +61,7 @@
                                         <th>Disposisi</th>
                                         {{-- <th>Validasi</th> --}}
                                         <th>Aksi</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -308,7 +309,10 @@
                     name: 'action',
                     orderable: false,
                     searcable: false,
-                    width: '10%'
+                },
+                {
+                    data: 'dana',
+                    name: 'dana'
                 },
             ]
         });

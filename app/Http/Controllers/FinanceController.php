@@ -23,12 +23,12 @@ class FinanceController extends Controller
         if (!in_array($user->position->id, $createdAllowed)) {
             abort(403);
         }
-
+        
         DB::beginTransaction();
         $validatedData = $request->validate([
             'lembaga_id' => 'required|numeric',
             'dana_received' => 'numeric|min:0',
-            'dana_used' => 'numeric|min:0',
+            // 'dana_used' => 'numeric|min:0',
         ]);
 
 
@@ -50,7 +50,7 @@ class FinanceController extends Controller
                 ->with('success', 'Data yang digunakan lebih besar');
         }
 
-        if (isset($dana_received) && isset($dana_used)) {
+        if (isset($dana_received) && isset($dana_used) && $dana_used != NULL) {
 
             $hitung  = $request->input('dana_received') - $request->input('dana_used');
 
@@ -63,7 +63,7 @@ class FinanceController extends Controller
         }
 
         $letter->save();
-
+        
         DB::commit();
 
         return redirect()

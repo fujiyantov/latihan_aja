@@ -20,6 +20,7 @@ class Letter extends Model
         'member_id',
         'letter_file',
         'status',
+        'dana'
     ];
 
     public function user()

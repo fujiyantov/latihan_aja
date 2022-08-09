@@ -24,6 +24,7 @@ class CreateLettersTable extends Migration
             $table->unsignedBigInteger('next_approval_by')->nullable();
             $table->string('letter_file')->nullable();
             $table->unsignedBigInteger('status')->default(0); // belum tervalidasi
+            $table->unsignedBigInteger('dana')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

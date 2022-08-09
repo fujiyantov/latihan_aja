@@ -156,9 +156,33 @@ class ProposalInController extends Controller
                 ->addColumn('tanggal', function ($item) {
                     return Carbon::parse($item->date)->format("d/F/Y");
                 })
+                ->addColumn('dana', function ($item) {
+                    if (Auth::user()->role_id == 13) {
+
+                        if ($item->dana != NULL) {
+                            $dana = '<small>Dana digunakan</small><br/><small> Rp ' . number_format($item->dana) . '<small>';
+                        } else {
+                            $dana = '
+                            <small>Dana digunakan</small>
+                                <form action="' . route('dana', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Apakah anda sudah yakin ini?'" . ')">
+                                    ' . csrf_field() . '
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <input type="number" class="form-control" name="dana_update" style="width:120px; padding-top: 5px; padding-bottom: 5px" />
+                                        </div>
+                                        <div class="col-2">
+                                            <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>
+                                        </div>
+                                </form>
+                            ';
+                        }
+
+                        return $dana;
+                    }
+                })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action', 'proposal', 'validasi', 'tanggal', 'disposisi', 'keterangan'])
+                ->rawColumns(['action', 'proposal', 'validasi', 'tanggal', 'disposisi', 'keterangan', 'dana'])
                 ->make();
         }
         $letter = Letter::all();
@@ -168,6 +192,23 @@ class ProposalInController extends Controller
             'letter' => $letter,
             'position' => $position
         ]);
+    }
+
+    public function updateDana(Request $request, $id)
+    {
+        DB::beginTransaction();
+        $letter = Letter::findOrFail($id);
+        $letter->dana = $request->dana_update;
+        $letter->save();
+
+        $user = User::findOrFail($letter->member_id);
+        $user->dana_used = (int) $user->dana_used + $request->dana_update;
+        $user->save();
+        DB::commit();
+
+        return redirect()
+            ->route('proposal-masuk.index')
+            ->with('success', 'Dana berhasil ditambahkan');
     }
 
     public function create()
@@ -251,7 +292,6 @@ class ProposalInController extends Controller
 
             $nextApprovalBy = 9;
             $validatedData['next_approval_by'] = 9;
-
         } else {
 
             switch ($user->position->id) {

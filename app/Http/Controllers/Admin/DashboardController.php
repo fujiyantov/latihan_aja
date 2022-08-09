@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Letter;
 
 use Illuminate\Http\Request;
+use App\Models\LetterHistories;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,12 +21,21 @@ class DashboardController extends Controller
         $tdy = 0;
         $tsd = 0;
 
-        return view('pages.admin.dashboard',[
+        return view('pages.admin.dashboard', [
             'masuk' => $masuk,
             'keluar' => $keluar,
             'tdd' => Auth::user()->dana_received,
             'tdy' => Auth::user()->dana_used,
             'tsd' => Auth::user()->dana_sisa,
         ]);
+    }
+
+    public function read($userID)
+    {
+        $response = LetterHistories::where('member_id', $userID);
+        $response->update([
+            'is_read' => 1
+        ]);
+        return 200;
     }
 }
